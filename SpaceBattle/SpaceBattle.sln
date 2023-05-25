@@ -1,9 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.33530.505
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceBattle", "SpaceBattle\SpaceBattle.csproj", "{B27B67A1-C973-4129-8D6E-007C81332786}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceBattle", "SpaceBattle\SpaceBattle.csproj", "{D9E58BCA-56B7-41FA-9638-29A923E86AD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B27B67A1-C973-4129-8D6E-007C81332786}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B27B67A1-C973-4129-8D6E-007C81332786}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B27B67A1-C973-4129-8D6E-007C81332786}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B27B67A1-C973-4129-8D6E-007C81332786}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {18CB1BCC-6415-4E9C-A98A-297D00C82364}
+		{D9E58BCA-56B7-41FA-9638-29A923E86AD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9E58BCA-56B7-41FA-9638-29A923E86AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9E58BCA-56B7-41FA-9638-29A923E86AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9E58BCA-56B7-41FA-9638-29A923E86AD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

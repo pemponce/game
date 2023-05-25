@@ -1,18 +1,16 @@
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\bin\Debug\SpaceBattle.exe.config
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\bin\Debug\SpaceBattle.exe
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\bin\Debug\SpaceBattle.pdb
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.AssemblyReference.cache
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.SuggestedBindingRedirects.cache
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\MainMenuWindow.baml
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\MainMenuWindow.g.cs
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\MainWindow.g.cs
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\App.g.cs
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle_MarkupCompile.cache
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle_MarkupCompile.lref
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\MainWindow.baml
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.g.resources
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.Properties.Resources.resources
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.GenerateResource.cache
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.CoreCompileInputs.cache
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.exe
-C:\Users\azhel\OneDrive\Рабочий стол\C#\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.pdb
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\bin\Debug\SpaceBattle.exe.config
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\bin\Debug\SpaceBattle.exe
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\bin\Debug\SpaceBattle.pdb
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.AssemblyReference.cache
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.SuggestedBindingRedirects.cache
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\MainWindow.g.cs
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\App.g.cs
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle_MarkupCompile.cache
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle_MarkupCompile.lref
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\MainWindow.baml
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.g.resources
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.Properties.Resources.resources
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.GenerateResource.cache
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.CoreCompileInputs.cache
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.exe
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.pdb

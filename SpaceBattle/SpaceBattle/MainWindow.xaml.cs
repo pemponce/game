@@ -1,179 +1,319 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using System.Windows.Threading;
-using System.Linq;
 
 namespace SpaceBattle
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow : Window
     {
-        private bool moveLeft;
-        private bool moveRight;
-        private double playerSpeed = 10;
-        private double enemySpeed = 1.5;
-        private int score = 0;
-        private int damage = 0;
-        private DispatcherTimer gameTimer = new DispatcherTimer();
-        private Random rand = new Random();
-        private List<ImageBrush> enemySprites = new List<ImageBrush>();
-        private double enemySpawnRate = 2.0;
+
+        DispatcherTimer _gameTimer = new DispatcherTimer();
+        bool _moveLeft, _moveRight;
+        List<Rectangle> _itemRemover = new List<Rectangle>();
+
+        Random _rand = new Random();
+
+        int _enemySpriteCounter = 0;
+
+        //enemyCounter and limit are the seconds between spawns
+        //enemyCounter should start higher than limit so that the player has a few more seconds before game starts
+        double _enemyCounter = 10;
+        int _limit = 5;
+
+        //scalar multiplier to control how fast enemies spawn. a higher multiplier means spawning faster
+        double _enemySpawnRate = 1.0;
+
+        int _enemySpeed = 250;
+        int _playerSpeed = 300;
+        int _bulletSpeed = 600;
+
+        int _score = 160;
+        int _damage = 0;
+
+        int _edgePadding = 10;
+
+        Rect _playerHitBox;
+
+        int _targetFps = 144;
+
+        Stopwatch _timeManager = Stopwatch.StartNew();
+        float _deltaTime = 0.0f;
+
+        List<ImageBrush> _enemySprites = new List<ImageBrush>();
 
         public MainWindow()
         {
             InitializeComponent();
-            InitializeGame();
-        }
 
-        private void InitializeGame()
-        {
-            LoadEnemySprites();
-            gameTimer.Tick += GameLoop;
-            gameTimer.Interval = TimeSpan.FromMilliseconds(20);
-            gameTimer.Start();
-        }
+            _gameTimer.Interval = TimeSpan.FromSeconds(1.0 / _targetFps);
 
-        private void LoadEnemySprites()
-        {
-            enemySprites.Add(new ImageBrush(new BitmapImage(new Uri("1.png", UriKind.Relative))));
-            enemySprites.Add(new ImageBrush(new BitmapImage(new Uri("2.png", UriKind.Relative))));
+            //assigning the gameTimer Tick event call to custom function GameLoop 
+            _gameTimer.Tick += GameLoop;
+            _gameTimer.Start();
+
+            GameScreen.Focus();
+
+            //loading and setting background image
+            ImageBrush bg = new ImageBrush();
+            bg.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Assets/purple.png"));
+            bg.TileMode = TileMode.Tile;
+            
+            bg.ViewportUnits = BrushMappingMode.RelativeToBoundingBox;
+            GameScreen.Background = bg;
+
+            //loading player image
+            ImageBrush playerImage = new ImageBrush();
+            playerImage.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Assets/player.png"));
+            Player.Fill = playerImage;
+
+            //load all enemy sprites in initalization
+            for (int i = 1; i <= 2; i++)
+            {
+                ImageBrush temp = new ImageBrush();
+
+                string uri = string.Format("pack://application:,,,/Assets/{0}.png", i);
+                temp.ImageSource = new BitmapImage(new Uri(uri));
+                _enemySprites.Add(temp);
+            }
+
+            //initializing labels
+            lbl_ScoreText.Content = "Score: " + _score;
+            lbl_DamageText.Content = "Damage: " + _damage;
         }
 
         private void GameLoop(object sender, EventArgs e)
         {
-            double deltaTime = gameTimer.Interval.TotalSeconds;
+            //calculating deltaTime
+            _timeManager.Stop();
+            _deltaTime = _timeManager.ElapsedMilliseconds / 1000.0f;
+            _timeManager.Restart();
 
-            if (moveLeft && Canvas.GetLeft(Player) > 0)
+            _playerHitBox = new Rect(Canvas.GetLeft(Player), Canvas.GetTop(Player), Player.Width, Player.Height);
+
+            _enemyCounter -= _enemySpawnRate * _deltaTime;
+
+            if (_enemyCounter < 0)
             {
-                Canvas.SetLeft(Player, Canvas.GetLeft(Player) - playerSpeed);
+                MakeEnemy();
+                _enemyCounter = _limit;
             }
 
-            if (moveRight && Canvas.GetLeft(Player) + Player.Width < GameScreen.ActualWidth)
+            if (_moveLeft && _playerHitBox.X > 0 + _edgePadding)
             {
-                Canvas.SetLeft(Player, Canvas.GetLeft(Player) + playerSpeed);
+                Canvas.SetLeft(Player, Canvas.GetLeft(Player) - _playerSpeed * _deltaTime);
             }
 
-            List<Rectangle> itemRemover = new List<Rectangle>();
+            //for some reason, frame is always 17 pixels wider than specified
+            if (_moveRight && _playerHitBox.X + _playerHitBox.Width < Application.Current.MainWindow.Width - 17 - _edgePadding)
+            {
+                Canvas.SetLeft(Player, Canvas.GetLeft(Player) + _playerSpeed * _deltaTime);
+            }
 
-            foreach (var r in GameScreen.Children.OfType<Rectangle>())
+            foreach (Rectangle r in GameScreen.Children.OfType<Rectangle>())
             {
                 if ((string)r.Tag == "bullet")
                 {
-                    Canvas.SetTop(r, Canvas.GetTop(r) - 20);
 
-                    if (Canvas.GetTop(r) < 10)
+                    Canvas.SetTop(r, Canvas.GetTop(r) - _bulletSpeed * _deltaTime);
+
+                    Rect bulletHitBox = new Rect(Canvas.GetLeft(r), Canvas.GetTop(r), r.Width, r.Height);
+
+                    if (Canvas.GetTop(r) + r.Width < 0)
                     {
-                        itemRemover.Add(r);
+                        _itemRemover.Add(r);
+                    }
+
+                    foreach (Rectangle r1 in GameScreen.Children.OfType<Rectangle>())
+                    {
+                        if ((string)r1.Tag == "enemy")
+                        {
+                            Rect enemyHit = new Rect(Canvas.GetLeft(r1), Canvas.GetTop(r1) + r1.Height / 4, r1.Width, r1.Height - r1.Height / 2);
+
+                            if (bulletHitBox.IntersectsWith(enemyHit))
+                            {
+                                _itemRemover.Add(r);
+                                _itemRemover.Add(r1);
+
+                                _score++;
+
+                                //TODO: make enemy spawn rate calculations into a function
+                                if (_score >= 5)
+                                {
+                                    _playerSpeed = 400;
+                                    _enemySpawnRate = 5.0;
+                                    _enemySpeed = 245;
+
+                                    if (_score >= 100)
+                                    {
+                                        _enemySpawnRate = 20.0;
+                                        if (_score >= 250)
+                                        {
+                                            _playerSpeed = 420;
+                                            _enemySpawnRate = 50.0;
+                                            _enemySpeed = 230;
+                                        }
+                                    }
+                                }
+
+                                //TODO: make updating labels into a function
+                                lbl_ScoreText.Content = "Score: " + _score;
+                            }
+                        }
                     }
                 }
 
                 if ((string)r.Tag == "enemy")
                 {
-                    Canvas.SetTop(r, Canvas.GetTop(r) + enemySpeed * deltaTime);
+                    Canvas.SetTop(r, Canvas.GetTop(r) + _enemySpeed * _deltaTime);
 
-                    Rect playerHitBox = new Rect(Canvas.GetLeft(Player), Canvas.GetTop(Player), Player.Width, Player.Height);
+                    //TODO: make taking damage as well as updating labels into two seperate functions
+
                     Rect enemyHitBox = new Rect(Canvas.GetLeft(r), Canvas.GetTop(r), r.Width, r.Height);
 
-                    if (playerHitBox.IntersectsWith(enemyHitBox))
+                    if (_playerHitBox.IntersectsWith(enemyHitBox))
                     {
-                        damage++;
-                        lbl_DamageText.Content = "Damage: " + damage;
-                        itemRemover.Add(r);
+                        _itemRemover.Add(r);
 
-                        if (damage >= 3)
-                        {
-                            gameTimer.Stop();
-                            MessageBox.Show("Game Over!" + Environment.NewLine + "Your score is: " + score, "Game Over", MessageBoxButton.OK, MessageBoxImage.Information);
-                            ShowMainMenu();
-                        }
-                    }
-
-                    if (Canvas.GetTop(r) > 750)
-                    {
-                        itemRemover.Add(r);
+                        //if the enemy hits you, you take damage
+                        _damage += 5;
+                        lbl_DamageText.Content = "Damage: " + _damage;
                     }
                 }
             }
 
-            foreach (Rectangle i in itemRemover)
+            //TODO: make removing items into a function
+            if (_itemRemover.Count > 0)
             {
-                GameScreen.Children.Remove(i);
-            }
-
-            if (rand.NextDouble() < enemySpawnRate * deltaTime)
-            {
-                ImageBrush enemySprite = enemySprites[rand.Next(0, enemySprites.Count)];
-                Rectangle enemy = new Rectangle
+                foreach (Rectangle r in _itemRemover)
                 {
-                    Tag = "enemy",
-                    Width = 50,
-                    Height = 50,
-                    Fill = enemySprite
+                    GameScreen.Children.Remove(r);
+                }
+                _itemRemover.Clear();
+            }
+
+            //TODO: change the restart game code to a function, and make it so that the current instance resets, not opening a new process
+            if (_damage > 99)
+            {
+                _gameTimer.Stop();
+                _timeManager.Stop();
+                lbl_DamageText.Content = "Damage: 100";
+                lbl_DamageText.Foreground = Brushes.Red;
+
+                MessageBox.Show("Captain! You have destroyed " + _score + " Alien Ships\n Press OK to Play Again", "Shooter Game:");
+                Process.Start(Application.ResourceAssembly.Location);
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+                _moveLeft = true;
+            }
+            if (e.Key == Key.Right)
+            {
+                _moveRight = true;
+            }
+
+            if (e.Key == Key.Space)
+            {
+                //TODO: potentially turn bullet into a class with custom constructor for custom images, speed, damage, etc.
+                Rectangle newBullet = new Rectangle
+                {
+                    Tag = "bullet",
+                    Height = 20,
+                    Width = 5,
+                    Fill = Brushes.White,
+                    Stroke = Brushes.Red
                 };
-                Canvas.SetTop(enemy, -enemy.Height);
-                Canvas.SetLeft(enemy, rand.Next(0, (int)(GameScreen.ActualWidth - enemy.Width)));
-                GameScreen.Children.Add(enemy);
-            }
+                Canvas.SetLeft(newBullet, Canvas.GetLeft(Player) + Player.Width / 2 - newBullet.Width / 2);
+                Canvas.SetTop(newBullet, Canvas.GetTop(Player) - newBullet.Height);
 
-            lbl_ScoreText.Content = "Score: " + score;
-            score++;
+                GameScreen.Children.Add(newBullet);
+            }
+            
+            if (e.Key == Key.P || e.Key == Key.P)
+            {
+                TogglePause();
+            }
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnPreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
             {
-                moveLeft = true;
+                _moveLeft = false;
             }
-
             if (e.Key == Key.Right)
             {
-                moveRight = true;
-            }
-
-            if (e.Key == Key.Escape)
-            {
-                gameTimer.Stop();
+                _moveRight = false;
             }
         }
 
-        private void OnKeyUp(object sender, KeyEventArgs e)
+        private void OnPauseButtonClick(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Left)
-            {
-                moveLeft = false;
-            }
+            TogglePause();
+        }
 
-            if (e.Key == Key.Right)
+        private void TogglePause()
+        {
+            switch (_gameTimer.IsEnabled)
             {
-                moveRight = false;
-            }
-
-            if (e.Key == Key.Escape)
-            {
-                gameTimer.Stop();
+                case true:
+                    _timeManager.Stop();
+                    _gameTimer.Stop();
+                    break;
+                case false:
+                    _timeManager.Restart();
+                    _gameTimer.Start();
+                    break;
+                default:
+                    Console.WriteLine("Cosmic bit flip...");
+                    break;
             }
         }
 
-
-
-        private void ShowMainMenu()
+        private void MakeEnemy()
         {
-            MainMenuWindow mainMenu = new MainMenuWindow();
-            mainMenu.Show();
-            Close();
-        }
+            _enemySpriteCounter = _rand.Next(0, 2);
 
-        protected override void OnContentRendered(EventArgs e)
-        {
-            base.OnContentRendered(e);
-            MainMenuWindow mainMenu = new MainMenuWindow();
-            mainMenu.Show();
+            //TODO: turn enemy into a class with custom constructor for different enemy types, health, etc. 
+               Rectangle newEnemy = new Rectangle
+            {
+                Tag = "enemy",
+                Height = 55,
+                Width = 60,
+                Fill = _enemySprites[_enemySpriteCounter],
+            };
+
+            Canvas.SetLeft(newEnemy, _rand.Next(30, 730));
+            Canvas.SetTop(newEnemy, -100);
+            GameScreen.Children.Add(newEnemy);
+
+            /*
+            watch.Stop();
+            Console.WriteLine("Spawned new enemy at time=" + watch.ElapsedMilliseconds / 1000.0);
+            watch.Restart();
+            */
         }
     }
 }
