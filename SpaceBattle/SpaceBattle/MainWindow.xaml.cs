@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using System.Windows.Threading;
@@ -31,13 +26,10 @@ namespace SpaceBattle
         Random rand = new Random();
 
         int enemySpriteCounter = 0;
-
-        //enemyCounter and limit are the seconds between spawns
-        //enemyCounter should start higher than limit so that the player has a few more seconds before game starts
+        
         double enemyCounter = 10;
         int limit = 5;
-
-        //scalar multiplier to control how fast enemies spawn. a higher multiplier means spawning faster
+        
         double enemySpawnRate = 1.0;
 
         int enemySpeed = 250;
@@ -100,8 +92,10 @@ namespace SpaceBattle
         
         private void OnMenuButtonClick(object sender, RoutedEventArgs e)
         {
+            TogglePause();
             Menu menu = new Menu();
             menu.Show();
+            gameTimer.Stop();
             Close();
         }
 
@@ -160,25 +154,20 @@ namespace SpaceBattle
 
                                 score++;
 
-                                //TODO: make enemy spawn rate calculations into a function
                                 if (score >= 5)
                                 {
                                     playerSpeed = 400;
                                     enemySpawnRate = 5.0;
-
                                     if (score >= 100)
                                     {
                                         enemySpawnRate = 20.0;
                                         if (score >= 250)
                                         {
-
                                             playerSpeed = 600;
                                             enemySpawnRate = 50.0;
                                         }
                                     }
                                 }
-
-                                //TODO: make updating labels into a function
                                 lbl_ScoreText.Content = "Score: " + score;
                             }
                         }
@@ -188,18 +177,6 @@ namespace SpaceBattle
                 if ((string)r.Tag == "enemy")
                 {
                     Canvas.SetTop(r, Canvas.GetTop(r) + enemySpeed * deltaTime);
-
-                    //TODO: make taking damage as well as updating labels into two seperate functions
-
-                    //if the enemy is at twice the height of the screen, remove them
-                    if (Canvas.GetTop(r) > Application.Current.MainWindow.Height + edgePadding)
-                    {
-                        itemRemover.Add(r);
-
-                        //if you don't shoot the enemy, and it makes it to your side, you take damage
-                        damage += 10;
-                        lbl_DamageText.Content = "Damage: " + damage;
-                    }
 
                     Rect enemyHitBox = new Rect(Canvas.GetLeft(r), Canvas.GetTop(r), r.Width, r.Height);
 
@@ -224,20 +201,39 @@ namespace SpaceBattle
                 itemRemover.Clear();
             }
 
-            //TODO: change the restart game code to a function, and make it so that the current instance resets, not opening a new process
             if (damage > 99)
             {
-                gameTimer.Stop();
-                timeManager.Stop();
-                lbl_DamageText.Content = "Damage: 100";
-                lbl_DamageText.Foreground = Brushes.Red;
-
-                MessageBox.Show("Captain! You have destroyed " + score + " Alien Ships\n Press OK to Play Again", "Shooter Game:");
-                Process.Start(Application.ResourceAssembly.Location);
-                Application.Current.Shutdown();
+                RestartGame();
             }
         }
 
+        private void RestartGame()
+        {
+            // Остановка таймеров и сброс значений
+            gameTimer.Stop();
+            timeManager.Stop();
+            lbl_DamageText.Content = "Damage: 100";
+            lbl_DamageText.Foreground = Brushes.Red;
+
+            // Диалоговое окно с информацией о результате и запросом на перезапуск игры
+            var result = MessageBox.Show("Captain! You have destroyed " + score + " Alien Ships\nPress OK to Play Again", "Shooter Game:", MessageBoxButton.OKCancel);
+
+            if (result == MessageBoxResult.OK)
+            {
+                // Сброс игровых переменных
+                score = 0;
+                damage = 0;
+
+                // Возобновление таймеров
+                gameTimer.Start();
+                timeManager.Start();
+            }
+            else
+            {
+                // Завершение приложения
+                Application.Current.Shutdown();
+            }
+        }
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
@@ -273,8 +269,10 @@ namespace SpaceBattle
 
             if (e.Key == Key.Escape)
             {
+                TogglePause();
                 Menu menu = new Menu();
                 menu.Show();
+                gameTimer.Stop();
                 Close();
             }
         }
@@ -330,12 +328,6 @@ namespace SpaceBattle
             Canvas.SetLeft(newEnemy, rand.Next(30, 730));
             Canvas.SetTop(newEnemy, -100);
             GameScreen.Children.Add(newEnemy);
-
-            /*
-            watch.Stop();
-            Console.WriteLine("Spawned new enemy at time=" + watch.ElapsedMilliseconds / 1000.0);
-            watch.Restart();
-            */
         }
     }
 }

@@ -21,9 +21,9 @@
             <Label Name="lbl_DamageText" Content="Damage: 99" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" Canvas.Left="650" VerticalAlignment="Center" />
     
             
-            <Button Name="btn_Pause" Content="Pause" FontSize="18" FontWeight="Normal" Foreground="White" Background="Red" Canvas.Left="400" HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnPauseButtonClick" Focusable="False" IsTabStop="False"/>
+            <Button Name="btn_Pause" Content="Pause" FontSize="18" FontWeight="Normal" Foreground="White" Background="Red" Canvas.Left="415" HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnPauseButtonClick" Focusable="False" IsTabStop="False"/>
             
-            <Button Name="btn_Menu" Content="Меню" FontSize="18" FontWeight="Normal" Foreground="White" Background="Blue" Canvas.Left="10" Canvas.Top="10" Click="OnMenuButtonClick" Focusable="False" IsTabStop="False" />
+            <Button Name="btn_Menu" Content="Меню" FontSize="18" FontWeight="Normal" Foreground="White" Background="Blue" Canvas.Left="330" Canvas.Top="0" Click="OnMenuButtonClick" Focusable="False" IsTabStop="False" />
     
         </Canvas>
         <Frame x:Name="MyFrame" />

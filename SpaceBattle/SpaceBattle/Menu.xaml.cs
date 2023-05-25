@@ -16,10 +16,6 @@ namespace SpaceBattle
             Close();
         }
 
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             // Добавьте код для закрытия приложения или выполнения действий при нажатии кнопки "Выход"
