@@ -7,20 +7,25 @@
         mc:Ignorable="d"        
         Title="Space Battle" Height="610" Width="800">
     <!--for some reason, frame is always 17 pixels wider than specified-->
-    <Canvas Name="GameScreen" Focusable="True" Background="Black" PreviewKeyDown="OnPreviewKeyDown" PreviewKeyUp="OnPreviewKeyUp">
-
-        <Rectangle Name="Player" Height="50" Width="60" Fill="Yellow" Canvas.Left="370" Canvas.Top="515" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-
-        <!--
-        <Rectangle Name="rightBound" Height="1000" Width="10" Fill="White" Canvas.Left="530" Canvas.Top="-45" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        <Rectangle Name="leftBound" Height="1000" Width="10" Fill="White" Canvas.Top="-30" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-       -->
-
-        <Label Name="lbl_ScoreText" Content="Score: 99" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" Canvas.Left="10" VerticalAlignment="Center" />
-        <Label Name="lbl_DamageText" Content="Damage: 99" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" Canvas.Left="650" VerticalAlignment="Center" />
-
-        
-        <Button Name="btn_Pause" Content="Pause" FontSize="18" FontWeight="Normal" Foreground="White" Background="Red" Canvas.Left="400" HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnPauseButtonClick" Focusable="False" IsTabStop="False"/>
-        
-    </Canvas>
+    <Grid>
+        <Canvas Name="GameScreen" Focusable="True" Background="Black" PreviewKeyDown="OnKeyDown" PreviewKeyUp="OnKeyUp">
+    
+            <Rectangle Name="Player" Height="50" Width="60" Fill="Yellow" Canvas.Left="370" Canvas.Top="515" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+    
+            <!--
+            <Rectangle Name="rightBound" Height="1000" Width="10" Fill="White" Canvas.Left="530" Canvas.Top="-45" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Rectangle Name="leftBound" Height="1000" Width="10" Fill="White" Canvas.Top="-30" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+           -->
+    
+            <Label Name="lbl_ScoreText" Content="Score: 99" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" Canvas.Left="10" VerticalAlignment="Center" />
+            <Label Name="lbl_DamageText" Content="Damage: 99" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" Canvas.Left="650" VerticalAlignment="Center" />
+    
+            
+            <Button Name="btn_Pause" Content="Pause" FontSize="18" FontWeight="Normal" Foreground="White" Background="Red" Canvas.Left="400" HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnPauseButtonClick" Focusable="False" IsTabStop="False"/>
+            
+            <Button Name="btn_Menu" Content="Меню" FontSize="18" FontWeight="Normal" Foreground="White" Background="Blue" Canvas.Left="10" Canvas.Top="10" Click="OnMenuButtonClick" Focusable="False" IsTabStop="False" />
+    
+        </Canvas>
+        <Frame x:Name="MyFrame" />
+    </Grid>
 </Window> 

@@ -1,0 +1,13 @@
+﻿<Window x:Class="SpaceBattle.Menu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Меню" Height="300" Width="400">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Content="Play" Width="150" Height="30" Margin="0 0 0 10" Click="PlayButton_Click"/>
+            <Button Content="Settings" Width="150" Height="30" Margin="0 0 0 10" Click="SettingsButton_Click"/>
+            <Button Content="Exit" Width="150" Height="30" Click="ExitButton_Click"/>
+        </StackPanel>
+        <Frame x:Name="MenuFrame" NavigationUIVisibility="Hidden" />
+    </Grid>
+</Window>

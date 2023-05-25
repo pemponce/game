@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,49 +24,49 @@ namespace SpaceBattle
     public partial class MainWindow : Window
     {
 
-        DispatcherTimer _gameTimer = new DispatcherTimer();
-        bool _moveLeft, _moveRight;
-        List<Rectangle> _itemRemover = new List<Rectangle>();
+        DispatcherTimer gameTimer = new DispatcherTimer();
+        bool moveLeft, moveRight;
+        List<Rectangle> itemRemover = new List<Rectangle>();
 
-        Random _rand = new Random();
+        Random rand = new Random();
 
-        int _enemySpriteCounter = 0;
+        int enemySpriteCounter = 0;
 
         //enemyCounter and limit are the seconds between spawns
         //enemyCounter should start higher than limit so that the player has a few more seconds before game starts
-        double _enemyCounter = 10;
-        int _limit = 5;
+        double enemyCounter = 10;
+        int limit = 5;
 
         //scalar multiplier to control how fast enemies spawn. a higher multiplier means spawning faster
-        double _enemySpawnRate = 1.0;
+        double enemySpawnRate = 1.0;
 
-        int _enemySpeed = 250;
-        int _playerSpeed = 300;
-        int _bulletSpeed = 600;
+        int enemySpeed = 250;
+        int playerSpeed = 300;
+        int bulletSpeed = 600;
 
-        int _score = 160;
-        int _damage = 0;
+        int score = 160;
+        int damage = 0;
 
-        int _edgePadding = 10;
+        int edgePadding = 10;
 
-        Rect _playerHitBox;
+        Rect playerHitBox;
 
-        int _targetFps = 144;
+        int targetFPS = 144;
 
-        Stopwatch _timeManager = Stopwatch.StartNew();
-        float _deltaTime = 0.0f;
+        Stopwatch timeManager = Stopwatch.StartNew();
+        float deltaTime = 0.0f;
 
-        List<ImageBrush> _enemySprites = new List<ImageBrush>();
+        List<ImageBrush> enemySprites = new List<ImageBrush>();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _gameTimer.Interval = TimeSpan.FromSeconds(1.0 / _targetFps);
+            gameTimer.Interval = TimeSpan.FromSeconds(1.0 / targetFPS);
 
             //assigning the gameTimer Tick event call to custom function GameLoop 
-            _gameTimer.Tick += GameLoop;
-            _gameTimer.Start();
+            gameTimer.Tick += GameLoop;
+            gameTimer.Start();
 
             GameScreen.Focus();
 
@@ -91,40 +90,47 @@ namespace SpaceBattle
 
                 string uri = string.Format("pack://application:,,,/Assets/{0}.png", i);
                 temp.ImageSource = new BitmapImage(new Uri(uri));
-                _enemySprites.Add(temp);
+                enemySprites.Add(temp);
             }
 
             //initializing labels
-            lbl_ScoreText.Content = "Score: " + _score;
-            lbl_DamageText.Content = "Damage: " + _damage;
+            lbl_ScoreText.Content = "Score: " + score;
+            lbl_DamageText.Content = "Damage: " + damage;
+        }
+        
+        private void OnMenuButtonClick(object sender, RoutedEventArgs e)
+        {
+            Menu menu = new Menu();
+            menu.Show();
+            Close();
         }
 
         private void GameLoop(object sender, EventArgs e)
         {
             //calculating deltaTime
-            _timeManager.Stop();
-            _deltaTime = _timeManager.ElapsedMilliseconds / 1000.0f;
-            _timeManager.Restart();
+            timeManager.Stop();
+            deltaTime = timeManager.ElapsedMilliseconds / 1000.0f;
+            timeManager.Restart();
 
-            _playerHitBox = new Rect(Canvas.GetLeft(Player), Canvas.GetTop(Player), Player.Width, Player.Height);
+            playerHitBox = new Rect(Canvas.GetLeft(Player), Canvas.GetTop(Player), Player.Width, Player.Height);
 
-            _enemyCounter -= _enemySpawnRate * _deltaTime;
+            enemyCounter -= enemySpawnRate * deltaTime;
 
-            if (_enemyCounter < 0)
+            if (enemyCounter < 0)
             {
                 MakeEnemy();
-                _enemyCounter = _limit;
+                enemyCounter = limit;
             }
 
-            if (_moveLeft && _playerHitBox.X > 0 + _edgePadding)
+            if (moveLeft && playerHitBox.X > 0 + edgePadding)
             {
-                Canvas.SetLeft(Player, Canvas.GetLeft(Player) - _playerSpeed * _deltaTime);
+                Canvas.SetLeft(Player, Canvas.GetLeft(Player) - playerSpeed * deltaTime);
             }
 
             //for some reason, frame is always 17 pixels wider than specified
-            if (_moveRight && _playerHitBox.X + _playerHitBox.Width < Application.Current.MainWindow.Width - 17 - _edgePadding)
+            if (moveRight && playerHitBox.X + playerHitBox.Width < Application.Current.MainWindow.Width - 17 - edgePadding)
             {
-                Canvas.SetLeft(Player, Canvas.GetLeft(Player) + _playerSpeed * _deltaTime);
+                Canvas.SetLeft(Player, Canvas.GetLeft(Player) + playerSpeed * deltaTime);
             }
 
             foreach (Rectangle r in GameScreen.Children.OfType<Rectangle>())
@@ -132,13 +138,13 @@ namespace SpaceBattle
                 if ((string)r.Tag == "bullet")
                 {
 
-                    Canvas.SetTop(r, Canvas.GetTop(r) - _bulletSpeed * _deltaTime);
+                    Canvas.SetTop(r, Canvas.GetTop(r) - bulletSpeed * deltaTime);
 
                     Rect bulletHitBox = new Rect(Canvas.GetLeft(r), Canvas.GetTop(r), r.Width, r.Height);
 
                     if (Canvas.GetTop(r) + r.Width < 0)
                     {
-                        _itemRemover.Add(r);
+                        itemRemover.Add(r);
                     }
 
                     foreach (Rectangle r1 in GameScreen.Children.OfType<Rectangle>())
@@ -149,32 +155,31 @@ namespace SpaceBattle
 
                             if (bulletHitBox.IntersectsWith(enemyHit))
                             {
-                                _itemRemover.Add(r);
-                                _itemRemover.Add(r1);
+                                itemRemover.Add(r);
+                                itemRemover.Add(r1);
 
-                                _score++;
+                                score++;
 
                                 //TODO: make enemy spawn rate calculations into a function
-                                if (_score >= 5)
+                                if (score >= 5)
                                 {
-                                    _playerSpeed = 400;
-                                    _enemySpawnRate = 5.0;
-                                    _enemySpeed = 245;
+                                    playerSpeed = 400;
+                                    enemySpawnRate = 5.0;
 
-                                    if (_score >= 100)
+                                    if (score >= 100)
                                     {
-                                        _enemySpawnRate = 20.0;
-                                        if (_score >= 250)
+                                        enemySpawnRate = 20.0;
+                                        if (score >= 250)
                                         {
-                                            _playerSpeed = 420;
-                                            _enemySpawnRate = 50.0;
-                                            _enemySpeed = 230;
+
+                                            playerSpeed = 600;
+                                            enemySpawnRate = 50.0;
                                         }
                                     }
                                 }
 
                                 //TODO: make updating labels into a function
-                                lbl_ScoreText.Content = "Score: " + _score;
+                                lbl_ScoreText.Content = "Score: " + score;
                             }
                         }
                     }
@@ -182,56 +187,66 @@ namespace SpaceBattle
 
                 if ((string)r.Tag == "enemy")
                 {
-                    Canvas.SetTop(r, Canvas.GetTop(r) + _enemySpeed * _deltaTime);
+                    Canvas.SetTop(r, Canvas.GetTop(r) + enemySpeed * deltaTime);
 
                     //TODO: make taking damage as well as updating labels into two seperate functions
 
+                    //if the enemy is at twice the height of the screen, remove them
+                    if (Canvas.GetTop(r) > Application.Current.MainWindow.Height + edgePadding)
+                    {
+                        itemRemover.Add(r);
+
+                        //if you don't shoot the enemy, and it makes it to your side, you take damage
+                        damage += 10;
+                        lbl_DamageText.Content = "Damage: " + damage;
+                    }
+
                     Rect enemyHitBox = new Rect(Canvas.GetLeft(r), Canvas.GetTop(r), r.Width, r.Height);
 
-                    if (_playerHitBox.IntersectsWith(enemyHitBox))
+                    if (playerHitBox.IntersectsWith(enemyHitBox))
                     {
-                        _itemRemover.Add(r);
+                        itemRemover.Add(r);
 
                         //if the enemy hits you, you take damage
-                        _damage += 5;
-                        lbl_DamageText.Content = "Damage: " + _damage;
+                        damage += 5;
+                        lbl_DamageText.Content = "Damage: " + damage;
                     }
                 }
             }
 
             //TODO: make removing items into a function
-            if (_itemRemover.Count > 0)
+            if (itemRemover.Count > 0)
             {
-                foreach (Rectangle r in _itemRemover)
+                foreach (Rectangle r in itemRemover)
                 {
                     GameScreen.Children.Remove(r);
                 }
-                _itemRemover.Clear();
+                itemRemover.Clear();
             }
 
             //TODO: change the restart game code to a function, and make it so that the current instance resets, not opening a new process
-            if (_damage > 99)
+            if (damage > 99)
             {
-                _gameTimer.Stop();
-                _timeManager.Stop();
+                gameTimer.Stop();
+                timeManager.Stop();
                 lbl_DamageText.Content = "Damage: 100";
                 lbl_DamageText.Foreground = Brushes.Red;
 
-                MessageBox.Show("Captain! You have destroyed " + _score + " Alien Ships\n Press OK to Play Again", "Shooter Game:");
+                MessageBox.Show("Captain! You have destroyed " + score + " Alien Ships\n Press OK to Play Again", "Shooter Game:");
                 Process.Start(Application.ResourceAssembly.Location);
                 Application.Current.Shutdown();
             }
         }
 
-        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
             {
-                _moveLeft = true;
+                moveLeft = true;
             }
             if (e.Key == Key.Right)
             {
-                _moveRight = true;
+                moveRight = true;
             }
 
             if (e.Key == Key.Space)
@@ -240,8 +255,8 @@ namespace SpaceBattle
                 Rectangle newBullet = new Rectangle
                 {
                     Tag = "bullet",
-                    Height = 20,
-                    Width = 5,
+                    Height = 13,
+                    Width = 3,
                     Fill = Brushes.White,
                     Stroke = Brushes.Red
                 };
@@ -250,22 +265,29 @@ namespace SpaceBattle
 
                 GameScreen.Children.Add(newBullet);
             }
-            
-            if (e.Key == Key.P || e.Key == Key.P)
+
+            if (e.Key == Key.P)
             {
                 TogglePause();
             }
+
+            if (e.Key == Key.Escape)
+            {
+                Menu menu = new Menu();
+                menu.Show();
+                Close();
+            }
         }
 
-        private void OnPreviewKeyUp(object sender, KeyEventArgs e)
+        private void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
             {
-                _moveLeft = false;
+                moveLeft = false;
             }
             if (e.Key == Key.Right)
             {
-                _moveRight = false;
+                moveRight = false;
             }
         }
 
@@ -276,15 +298,15 @@ namespace SpaceBattle
 
         private void TogglePause()
         {
-            switch (_gameTimer.IsEnabled)
+            switch (gameTimer.IsEnabled)
             {
                 case true:
-                    _timeManager.Stop();
-                    _gameTimer.Stop();
+                    timeManager.Stop();
+                    gameTimer.Stop();
                     break;
                 case false:
-                    _timeManager.Restart();
-                    _gameTimer.Start();
+                    timeManager.Restart();
+                    gameTimer.Start();
                     break;
                 default:
                     Console.WriteLine("Cosmic bit flip...");
@@ -294,7 +316,7 @@ namespace SpaceBattle
 
         private void MakeEnemy()
         {
-            _enemySpriteCounter = _rand.Next(0, 2);
+            enemySpriteCounter = rand.Next(0, 2);
 
             //TODO: turn enemy into a class with custom constructor for different enemy types, health, etc. 
                Rectangle newEnemy = new Rectangle
@@ -302,10 +324,10 @@ namespace SpaceBattle
                 Tag = "enemy",
                 Height = 55,
                 Width = 60,
-                Fill = _enemySprites[_enemySpriteCounter],
+                Fill = enemySprites[enemySpriteCounter],
             };
 
-            Canvas.SetLeft(newEnemy, _rand.Next(30, 730));
+            Canvas.SetLeft(newEnemy, rand.Next(30, 730));
             Canvas.SetTop(newEnemy, -100);
             GameScreen.Children.Add(newEnemy);
 

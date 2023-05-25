@@ -13,5 +13,6 @@ namespace SpaceBattle
     /// </summary>
     public partial class App : Application
     {
+        
     }
 }

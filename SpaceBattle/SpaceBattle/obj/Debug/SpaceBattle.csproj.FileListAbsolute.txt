@@ -14,3 +14,5 @@ C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.cspro
 C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.csproj.CoreCompileInputs.cache
 C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.exe
 C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\SpaceBattle.pdb
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\menu.baml
+C:\Users\azhel\RiderProjects\SpaceBattle\SpaceBattle\obj\Debug\menu.g.cs
